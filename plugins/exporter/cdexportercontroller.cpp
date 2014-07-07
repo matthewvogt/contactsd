@@ -114,15 +114,8 @@ QString mangleDetailUri(const QString &uri, const QContactId &privilegedId)
     if (uri.startsWith(aggregateSyncTarget)) {
         int index = uri.indexOf(QChar::fromLatin1(':'));
         if (index != -1) {
-            if (privilegedId.isNull()) {
-                // This is a new aggregate - remove the existing mangling
-                return uri.mid(index + 1);
-            } else {
-                // Replace the existing mangling with that used in the privileged DB
-                const quint32 dbId(QtContactsSqliteExtensions::internalContactId(privilegedId));
-                const QString prefix(aggregateSyncTarget + QStringLiteral("-%1").arg(dbId));
-                return prefix + uri.mid(index);
-            }
+            // The URI may be of the obsolete form "'aggregate'-<ID>:" - if so, remove the ID portion
+            return aggregateSyncTarget + uri.mid(index);
         }
     }
 
